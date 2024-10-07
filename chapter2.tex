@@ -1,0 +1,64 @@
+\begin{multicols*}{3}
+\setlength{\premulticols}{1pt}
+\setlength{\postmulticols}{1pt}
+\setlength{\multicolsep}{1pt}
+\setlength{\columnsep}{2pt}
+
+\section{2.1 Simple Linear Regression}
+$y = \beta_0 + \beta_1 x + \epsilon$ is the simple linear regression model where $\beta_0$, the intercept, and $\beta_1$, the slope, are constant and $\epsilon$ is the random noise, modeled as independent random variables with $\mu = 0$ and $Var = \sigma^2$. Hence, $x$ is the regressor and y is a random variable so $\mathbb{E}(y|x) = \beta_0 + \beta_1 x$ and $Var(y|x) = \sigma^2$. We see that the mean of $y$ is a linear function through $x$ and the variance is not dependent on $x$.
+
+\section{2.2 Least Squares Estimate}
+\subsection{2.2.1 Estimation of $\beta_0$ \& $\beta_1$}
+$\hat{\beta_0} = \bar{y} - \hat{\beta_1} \bar{x}$ and $\hat{\beta_1} = \frac{S_{XY}}{S_{XX}}$ are the least squares estimators of the parameters, derived from differentiating and solving the least squares equation $S(\beta_0, \beta_1 ) = \sum ( y_i - \beta_0 - \beta_1 x_i )^2$ w.r.t $\beta_0$ and $\beta_1$. Here $S_{XY} = \sum y_i (x_i - \bar{x}) = \sum x_i (y_i - \bar{y})$ and $S_{XX} = \sum(x_i - \bar{x})^2$.
+
+\subsection{2.2.2 Properties of $\beta_0$ \& $\beta_1$}
+We see that $\hat{\beta_1} = \sum \frac{x_i - \bar{x}}{S_{XX}} y_i$ and $\hat{\beta_0}$ are linear combinations of of $y_i$ and can prove that they are unbiased estimators by taking their expectations. The variances of the estimators are $Var(\hat{\beta_1}) = \frac{\sigma^2}{S_{XX}}$ and $Var(\hat{\beta_0}) = \sigma^2 (\frac{1}{n} + \frac{\bar{x}^2}{S_{XX}})$. By the Gauss-Markov theorem, with i.i.d. $\epsilon$, $\mathbb{E}(\epsilon) = 0$ and $Var(\epsilon) = \sigma^2$ the least squares estimators are unbiased and have minimum variance when compared to all other estimators. Other properties are that $\sum e_i = 0$, $\sum y_i = \sum \hat{y_i}$ and $\sum x_i e_i = \sum y_i e_i = 0$.
+
+\subsection{2.2.3 Variance Estimation $\sigma^2$}
+The variance $\sigma^2$ is estimated as $SS_Res = \sum e_i^2$ as we do not have several observations of $y_i$ for at least one $x_i$. If we do, we can estimate the variance independent of the model's accuracy. We see that $SS_T = \sum (y_i - \bar{y})^2 = SS_{Res} + \hat{\beta_1} S_{XY}$, where $SS_R = \hat{\beta_1} S_{XY}$. $SS_{Res}$ has $n - 2$ degrees of freedom due to $\hat{\beta_0}$ and $\hat{\beta_1}$ being used to calculate $\hat{y_i}$. Hence, $\hat{\sigma}^2 = \frac{SS_{Res}}{n - 2} = MS_{Res}$ is an unbiased estimator $\sigma^2$.
+
+\subsection{2.2.4 Alternate Form of Model}
+We can also write the model as $y_i = \beta_0' + \beta_1(x_i - \bar{x}) + \epsilon_i$, where $beta_0' = beta_0 + beta_1 + \bar{x}$ which implies $beta_0' = \bar{y}$. This centers the model around $\bar{x}$ and makes the least squares estimators uncorrelated, good for finding confidence intervals.
+
+\section{2.3 Hypothesis Testing on $\beta_0$ \& $\beta_1$}
+\subsection{2.3.1 t Tests}
+We test for $H_0: \beta_1 = \beta_{test_i}$ and $H_1: \beta_1 \ne \beta_{test_i}$ with $Z_0 = \frac{\hat{\beta_1} - \beta_{test_i}}{\sqrt{\sigma^2 / S_{XX}}}$ and $t_0 = \frac{\hat{\beta_1} - \beta_{test_i}}{\sqrt{MS_{Res} / S_{XX}}}$ if the $\sigma^2$ is unknown and reject $H_0$ if $|t_0| > t_{\alpha/2, n - 2}$. For $\beta_0$ we replace the denominator with $MS_{Res} (\frac{1}{n} + \frac{\bar{x}^2}{S_{XX}})$. The denominators are known as the standard errors($se$) of the estimators.
+
+\subsection{2.3.2 t Testing Significance of Regression}
+By testing $H_0: \beta_1 = 0$ and $H_1: \beta_1 \ne 0$, we can find if $x$ and $y$ have a linear relationship, says nothing about the presence or lack of other relationships. The formula replaces the $\beta_{test_i}$ of the t test with $0$.
+
+\subsection{2.3.3 Analysis of Variance}
+$SS_T = SS_R + SS_{Res}$ is $\sum (y_i - \bar{y})^2 = \sum (\hat{y_i} - \bar{y})^2 + \sum (y_i - \hat{y_i})^2$. $SS_T$ has $n - 1$ d.o.f. as $SS_R = \hat{\beta_1}S_{XY}$ has $1$ d.o.f. ($\hat{\beta_1}$) and $SS_{Res}$ has $n - 2$ d.o.f. as the $n$ samples are constrained by $\hat{\beta_0}$ $\hat{\beta_1}$. We can test $F_0 = \frac{SS_R / 1}{SS_{Res} / (n-2) = \frac{MS_R}{MS_{Res}}} > F_{\alpha, 1, n - 2}$ and as, $E(MS_{Res}) = \sigma^2$ and $E(MS_{Res}) = \sigma^2 + \beta_1^2 S_{XX}$, a large $F_0$ indicates a linear relationship and $F_0$ follows a $F_{1, n - 2}$ distribution with non centrality $\lambda = \frac{\beta_1^2 S_{XX}}{\sigma^2}$. \\
+We can convert the t test in 2.3.2 into our F test by squaring it with gives $t_0^2 = \frac{\hat{\beta_1}^2}{MS_{Res}/S_{XX}} = \frac{\hat{\beta_1} S_{XY}}{MS_{Res}} = \frac{MS_R}{MS_{Res}} = F_0$ The square of a t variable with d.o.f. $f$ is a F variable with d.o.f. $1$ and $f$. The t test can test the 1 sided hypothesis but the F test cannot.
+
+\section{2.4 Interval Estimation}
+\subsection{2.4.1 Confidence Intervals on $\beta_0$, $\beta_1$ and $\sigma^2$}
+Assuming normal and i.i.d. $\epsilon$, we can construct the frequentist confidence interval $\hat{\beta_i} - t_{\alpha/2,n-2} se(\hat{\beta_i}) \le \beta_i \le \hat{\beta_i} + t_{\alpha/2,n-2} se(\hat{\beta_i})$ for $\beta_0$ and $\beta_1$, meaning if we repeatedly sample models, $95\%$ of the CIs will contain the true parameters. For $\sigma^2$, $\frac{(n - 2)MS_{Res}}{\sigma^2}$ is a $\chi^2_{n-2}$ distribution. Thus we can do $P\{\chi^2_{1-\alpha/2,n-2} \le \frac{(n - 2)MS_{Res}}{\sigma^2} \le \chi^2_{\alpha/2,n-2}\} = 1 - \alpha$ and $\frac{(n - 2)MS_{Res}}{\chi^2_{\alpha/2,n-2}} \le \sigma^2 \le \frac{(n - 2)MS_{Res}}{\chi^2_{1-\alpha/2,n-2}}$.
+
+\subsection{2.4.2 Interval Estimation of the Mean Response}
+For a regressor $x_0$ within the range of the model, $\mathbb{E}(y|x_0) = \hat{\mu}_{y|x_0} = \hat{\beta_0} + \hat{\beta_1}x_0$ and $Var(\hat{\mu}_{y|x_0}) = \sigma[\frac{1}{n} + \frac{(x_0 - \bar{x})^2}{S_{XX}}]$, so $\hat{\mu}_{y|x_0} - T \le \mathbb{E}(y|x_0) \le \hat{\mu}_{y|x_0} + T$, $T = t_{\alpha/2,n-2}\sqrt{MS_{Res}(\frac{1}{n} + \frac{(x_0 - \bar{x})^2}{S_{XX}})}$. Thus, we should not extrapolate our model as the interval width increases with $|x_0 - \bar{x}|$.
+
+\section{2.5 Prediction of New Observations}
+As $\hat{y_0}$ is independent of $y_0$ on., $\psi = y_0 - \hat{y_0}$ is the statistic to base the interval of $y_0$ predicted by $\hat{y_0}$ on. Based on $Var(\psi) = \sigma^2[1 + \frac{1}{n} + \frac{(x_0 - \bar{x})^2}{S_{XX}}]$, our prediction interval is $\hat{y_0} - T \le y_0 \le \hat{y_0} + T$, $T = t_{\alpha/2,n-2}\sqrt{MS_{Res}(1 + \frac{1}{n} + \frac{(x_0 - \bar{x})^2}{S_{XX}})}$. The prediction interval is larger than the CI as we include the noise from the future observation.
+\section{2.6 Coefficient of Determination, $R^2$}
+$R^2 = \frac{SS_R}{SS_T} = 1 - \frac{SS_{Res}}{SS_T}$ is the proportion of variance explained by the model. It can be inflated by adding more regressors, whilst making the model worse. A polynomial of degree n-1 will perfectly fit a dataset with no repeated $x$. $\mathbb{E}(R^2) = \frac{\beta_1^2S_{XX}/(n - 1)}{\beta_1^2S_{XX}/(n - 1) + \sigma^2}$ shows $R^2$ scales with the spread of $x$, $S_{XX}$.
+
+\section{2.10 Considerations in the Use of Regression}
+\textbf{1.} Regression is designed for interpolation not extrapolation. \textbf{2,3.} Extreme $x$ values and $x$ \& $y$ outliers heavily impact the model. \textbf{4.} Correlation does not imply causation. \textbf{5.} If we need to predict $x$, we need to condition our model on the accuracy of $x$'s prediction.
+
+\section{2.11 Regression Through the Origin}
+The model $y = \beta_1x + \epsilon$ has least square estimator $\hat{\beta_1} = \frac{\sum y_ix_i}{\sum x_i^2}$ and $\hat{\sigma^2} = MS_{Res} = \frac{\sum y_i^2 - \hat{\beta}\sum y_i x_i}{n - 1}$. The CI on $\beta_1$ is $\hat{\beta_i} \pm t_{\alpha/2,n-1} \sqrt{MS_{Res}/\sum x_i^2}$, the CI on $\mathbb{E}(y|x_0)$ is $\hat{\mu}_{y|x_0} \pm t_{\alpha/2,n-1} \sqrt{x_0^2 MS_{Res} / \sum x_i^2}$ and the prediction interval on $y_0$ is $\hat{y_0} \pm t_{\alpha/2,n-1} \sqrt{MS_{Res} (1 + x_0^2/\sum x_i^2)}$. The intervals on $y$ increase as $x$ increases. The model should only be used when the data is near the origin and we know the $x = 0 \Rightarrow y = 0$.$MS_{Res}$ is a better than $R^2$ at comparing no-intercept and intercept models as $R^2 = \sum \hat{y_i}^2 / \sum y_i^2$ in the no intercept model is the variation around the origin.
+
+\section{2.12 Estimation By Maximum Likelihood}
+MLE is the joint distribution of the observations with $ln L(y_i, x_i \beta_0, \beta_1, \sigma^2) \propto - \sum(y_i - \beta_0 - \beta_1 x_i)^2$. $\tilde{\beta_0}$ and $\tilde{\beta_1}$ are identical to the least square estimators whilst $\tilde{\sigma}^2 = \frac{1}{n}\sum(y_i - \tilde{\beta_0} - \tilde{\beta_1}x_i) = \frac{n - 1}{n} \hat{\sigma}^2$ is a biased estimator. MLE is a min variance, unbiased and consistent(close estimate as n increases) estimator and a set of sufficient statistics(contains all information of the model). However, MLE requires full distribution assumption whilst least squares only requires second moment assumptions.
+
+\section{2.13 Case Where the Regressor $x$ is Random}
+\subsection{2.13.1 $x$ and $y$ Joint Unknown Distribution}
+If $p(y|x) \sim N(\beta_0 + \beta_1x, \sigma^2)$ and $x$ are independent variables not dependent on $\beta_0$, $\beta_1$ and $\sigma^2$, all regression procedures remain unchanged. However, confidence coeff and statistical errors need to be viewed as repeated sampling of $(x_i, y_i)$ and not $y_i$ for fixed $x_i$s. 
+
+\subsection{2.13.2 $x$ and $y$ Joint Normal Distribution}
+The conditional distribution is $p(y|x) \sim N(\beta_0 + \beta_1x, \sigma_{y,x})$, $\beta_0 = \mu_y = \mu_x\rho\frac{\sigma_y}{\sigma_x}$ and $\beta_1 = \frac{\sigma_y}{\sigma_x}\rho$, where $\sigma_{y,x} = \sigma_y^2(1 - \rho^2)$ and $\rho = \frac{\sigma_{y,x}}{\sigma_y\sigma_x}$. We see that $\rho = 0 \Rightarrow \beta_1 = 0$, if $y$ and $x$ are independent, there is no linear relationship. We may use MLE to estimate the parameters same as before. \\ 
+We can estimate the correlation coefficient $\hat{\rho} = r = S_{xy}/\sqrt{S_{XX}S_T}$ and $\hat{\beta_1} = \sqrt{SS_T/SS_{XX}}r$ shows that the slope is $r$ scaled. $r$ measure the linear association between $y$ and $x$ and is meaningless when $x$ is controllable. $r^2 = R^2$. regression is more powerful than correlation as correlation cannot be used for prediction. \\
+We can test $H_0: \rho = 0$ with $t_0 = r\sqrt{n-2}/\sqrt{1-r^2}$ with $|t_0| > t_\alpha/2,n-2$. which is equivalent to testing $H_0: \beta_1 = 0$. The test for $H_0: \rho = \rho_0, \rho_0 \ne 0$ is harder, with $Z = arctanh(r) = 0.5ln[(1+r)/(1-r)]$ being normally distributed with $\mu_Z = arctanh(\rho) = 0.5ln[(1+\rho)/(1-\rho)]$ and $Var_Z=(n-3)^{-1}$ for moderately large samples. So the test is $Z_0 = (arctanh(r)-arctanh(\rho))\sqrt{n-3}$, $|Z_0| > Z_\alpha/2$. The CI of $\rho$ is $tanh(arctanh(r) \pm  Z_\alpha/2/\sqrt{n-3})$ where $tanh(r) = (e^r-e^{-r})/(e^r+e^{-r})$.
+
+\end{multicols*}

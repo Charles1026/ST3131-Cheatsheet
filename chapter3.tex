@@ -1,0 +1,72 @@
+\begin{multicols*}{3}
+\setlength{\premulticols}{1pt}
+\setlength{\postmulticols}{1pt}
+\setlength{\multicolsep}{1pt}
+\setlength{\columnsep}{2pt}
+
+\subsection{3.1 Multiple Regression Models}
+A model with $k$ regressors describes a $k$d hyperplane in $k+1$d space(include response). Parameter $\beta_i$ represents the change in response per unit change in $x_i$, holding all other regressor variables constant, a.k.a. partial regression coefficients. Multiple linear regression models are often \textbf{empirical}.
+
+\subsection{3.2 Estimation of The Model Parameters}
+\subsubsection{3.2.1 Least-Squares Estimation of Coefficients}
+Assuming there are more observations than regressors, the estimator of $\boldsymbol{\beta}$ is $\hat{\boldsymbol{\beta}} = (\X^T\X)^{-1} \mathbf{X}^T\mathbf{y}$, provided the regressors(columns of $\mathbf{X}$) are linearly independent, implying $\mathbf{X}^T\mathbf{X}$ is invertible. $\hat{\mathbf{y}} = \mathbf{X}\hat{\beta} = \mathbf{X}(\X^T\X)^{-1}\mathbf{X}^T\mathbf{y} = \mathbf{H}\mathbf{y}$ shows $\mathbf{H} = \mathbf{X}(\X^T\X)^{-1}\mathbf{X}^T$ maps the observed values to the predicted values. The error term can thus be written as $\mathbf{e} = (\mathbf{I} - \mathbf{H})\mathbf{y}$.
+
+\subsubsection{3.2.2 Geometrical Interpretation of Least-Squares}
+We can picture $\mathbf{y}$ as a $n$ dimensional vector and the $p$ $n$ dimensional columns of $\mathbf{X}$ as a $p$ dimensional subspace called the \textbf{estimation space}, so any point in that space can be represented by $\mathbf{X}\boldsymbol{\beta}$. Hence, minimising the error $\boldsymbol{\epsilon}^2 = (\mathbf{y} - \mathbf{X}\boldsymbol{\beta})^2$ is just finding the shortest vector, which will be orthogonal, from vector $\mathbf{y}$ to the estimation space.
+
+\subsubsection{3.2.3 Properties of the Least-Squares Estimators}
+The estimators $\E(\hat{\boldbeta}) = \E[(\X^T\X)^{-1}\X^T(\X\boldbeta + \boldeps)] = \boldbeta$ are unbiased and $Cov(\hat{\boldbeta}) = Var[(\X^T\X)^{-1}\X^T\y] = (\X^T\X)^{-1}\X^T Var(y) [(\X^T\X)^{-1}\X^T]^T = \sigma^2(\X^T\X)^{-1}$ is the covariance matrix. $\hat{\boldbeta}$ is a minimum variance estimator of $\boldbeta$. By assuming $\epsilon_i$ are normally distributed, $\hat{\boldbeta}$ is also the MLE of $\boldbeta$ and the MLE is minimum variance too.
+
+\subsubsection{3.2.4 Estimation of $\sigma^2$}
+The residual sum of squares is $SS_{Res} = (\mathbf{y} - \mathbf{X}\boldsymbol{\beta})^2 = \y^T\y - \hat{\boldbeta}^T\X^T\y$ with $n-p$ d.o.f. and thus $\hat{\sigma}^2 = MS_{Res} = \frac{SS_{Res}}{n-p}$. Similar to section 2.2.3, $\hat{\sigma}^2$ is model dependent.
+
+\subsubsection{3.2.5 Inadequacy of Scatter Diagrams}
+As a scatterplot has only 2 dimensions, we can only visualise the relationship between the response and 1 variable at once. The scatterplot does not fix the other variables, so the hidden regressors can confound the response of the visualised regressor. To properly use scatterplots, we create the entire plot with a fixed value for every other regressors. 
+
+\subsubsection{3.2.6 Maximum-Likelihood Estimation}
+Assuming $\boldeps \sim \mathbf{N}(\mathbf{0}, \sigma^2\mathbf{I})$, the log likelihood is $ln L(y_i, x_i \beta_0, \beta_1, \sigma^2) \propto - (\y - \X\hat{\boldbeta})^T(\y - \X\hat{\boldbeta})$ and maximising it is equivalent to solving the least-squares estimator. The MLE for the variance is $\hat{\sigma}^2 = \frac{1}{n}(\y - \X\hat{\boldbeta})^T(\y - \X\hat{\boldbeta})$. These are generalisations from the MLE in section 2.11.
+
+\subsection{3.3 Hypothesis Testing}
+\subsubsection{3.3.1 Test for Significance of Regression}
+This tests for overall model adequacy, $H_0: \beta_i = 0, \forall i \in [1, k]$ and $H_1: \exists i \in [1, k], \beta_i \neq 0$. To do this, we generalise $SS_T = SS_R + SS_{Res}$ from section 2.3.3 so $SS_R/\sigma^2$ follows a $\chi_k^2$ distribution in $H_0$ and use $F_0 = \frac{SS_R/k}{SS_Res/(n - k - 1)} = \frac{MS_R}{MS_{Res}} > F_{\alpha,k,n-k-1}$ which follows the $F_{k,n-k-1} distribution$. As $\E(MS_{Res} = \sigma^2)$ and $\E(MS_R) = \sigma^2\frac{\lambda}{k}$, where $\beta^*$ are the non intercept parameters, $\X_c$ is regressor mean centered $X$ and $\lambda = \frac{1}{\sigma^2}\boldbeta^{*T}\X_c^T\X_c\boldbeta^*$. If $F_0$ is large, it indicates that we should reject $H_0$ and it has noncentrality parameter $\lambda$. \\
+We can also use $R^2$ and $R_{Adj}^2$. As $R^2$ grows when a regressor is added regardless of its contribution, we use $R_{Adj}^2 = 1 - \frac{SS_{Res}/(n-p)}{SS_T/(n-1)}$. As the $SS_T/(n-1)$ is constant, $R_{Adj}^2$. only increases if the addition of a variable reduces $SS_{Res}/(n-p)$.
+
+\subsubsection{3.3.2 Test on Individual Coefficients \& Subsets}
+We do a marginal test of individual regressors given the other regressors, $H_0: \beta_i = 0$ \& $H_1: \beta_i \neq 0$, with the test $|t_0| > t_{\alpha/2,n-k-1}$ and statistic $t_0 = \hat{\beta_i} / \sqrt{\hat{\sigma}^2 C_{ii}}$ where $C_{ii}$ is from $(\X^T\X)^{-1}$ \\
+For subsets of regressors, we partition $\boldbeta = (\boldbeta_1 | \boldbeta_2)^T$ with $r$ \& $n - r$ elements, then test $H_0: \beta_2 = 0$ \& $H_1: \beta_2 \neq 0$. We fit the reduced model $\y = \X_1\boldbeta_1 + \epsilon_1$ and find its $SS_R(\boldbeta_1) = \hat{\boldbeta_1}\X_1^T\y$ with $p - r$ d.o.f. and the \textbf{extra sum of squares} $SS_R(\boldbeta_2 | \boldbeta_1) = SS_r(\boldbeta) - SS_R(\boldbeta_1)$ with $r$ d.o.f.. We then do the partial F test $F_0 = \frac{SS_R(\boldbeta_2 | \boldbeta_1) / r}{MS_{Res}} > F_{\alpha,r,n-p}$. If $\boldbeta_2 \neq 0$ then $F_0$ has noncentrality parameter $\lambda = \frac{1}{\sigma^2}\boldbeta_2^T\X_2^T[\mathbf{I} - \X_1(\X_1^T\X_1)^{-1}\X_1^T]\X_2\boldbeta_2$. Note if there is multicollinearity in the data, $\lambda$ is near zero even if $\boldbeta_2$ is important as $X_1$ and $X_2$ are near-collinear.
+
+\subsubsection{3.3.3 Special Case of Orthogonal Columns in X}
+If the columns of $\X_1$ are orthogonal to those in $\X_2$, we can find $SS_R(\boldbeta_2)$ independent of $\X_1$ as $SS_R(\boldbeta) = SS_R(\boldbeta_1) + SS_R(\boldbeta_2)$.
+
+\subsubsection{3.3.4 Testing the General Linear Hypothesis}
+Suppose $H_0: \mathbf{T}\boldbeta = \mathbf{0}$, where $\mathbf{T}$ is an $mxp$ matrix of constants such that $r, r < m$ equations of $\mathbf{T}$ are independent. The full model is  we can test for dependent coefficients and coefficients that are $0$ by obtaining the reduced model $\mathbf{y} = \mathbf{Z}\boldsymbol{\gamma} + \boldeps$, where $\mathbf{Z}$ is a $n x (p-r)$ matrix, by using the $r$ independent equations to solve for the $r$ coefficients of the full model in terms of the remaining $p - r$ coefficients. $SS_{Res}(RM) = \mathbf{y}^T\mathbf{y} - \hat{\boldsymbol{\gamma}}^T\mathbf{Z}^T\hat{\mathbf{y}} \geq SS_{Res}(FM)$ as it has less parameters so a higher d.o.f. for $SS_{Res}$, $n-p+r$ vs $n-p$. We test $H_0: \mathbf{T}\boldbeta=\mathbf{0}$ with $SS_H = SS_{Res}(RM) - SS_{Res}(FM) = \hat{\boldbeta}^T\mathbf{T}^T[\mathbf{T}(\X^T\X)^{-1}\mathbf{T}^T]^{-1}\mathbf{T}\hat{\boldbeta}$ with r d.o.f. and statistic $F_0 = \frac{SS_H/r}{SS_{Res}(FM)/(n-p)} > F_{\alpha,r,n-p}$. We can also test $H_0: \mathbf{T}\boldbeta=\mathbf{c}$ with $SS_H = (\mathbf{T}\hat{\boldbeta}-\mathbf{c})^T[\mathbf{T}(\X^T\X)^{-1}\mathbf{T}^T]^{-1}(\mathbf{T}\hat{\boldbeta}-\mathbf{c})$.
+
+\subsection{3.4 Confidence Intervals in Multiple Regression}
+\subsubsection{3.4.1 CIs on the Regression Coefficients}
+The marginal distribution of each coefficient is $N(\beta_i, \sigma^2\mathbf{C}_{ii})$ so each statistic is $t_0 = \hat{\beta_i}\beta_i/se(\hat{\beta_i})$ with interval $\hat{\beta_i} \pm t_{\alpha/2,n-p}se(\hat{\beta_i})$ where $se(\hat{\beta_i}) = \sqrt{\sigma^2\mathbf{C}_{ii}}$.
+
+\subsubsection{3.4.2 CIs Estimation of the Mean Response}
+For $\mathbf{x}_0$, $\E(y|\mathbf{x}_0) = \mathbf{x}_0^T\boldbeta = \E(\hat{y_0})$ and $Var(\hat{y_0}) = \sigma^2\mathbf{x}_0^T(\X^T\X)^{-1}\mathbf{x}_0$ implies the CI for the mean response $\E(y|\mathbf{x}_0)$ is $\hat{y_0} \pm t_{\alpha/2,n-p}\sqrt{Var(\hat{y_0})}$. The CI's size is good for comparing models, and the further from the mean, the more pronounced the difference.
+
+\subsubsection{3.4.3 Simultaneous CIs on Regression Coefficients}
+The CI for all parameters is $(\hat{\boldbeta}\boldbeta)^T\X^T\X(\hat{\boldbeta}\boldbeta)/pMS_{Res} \leq F_{\alpha,p,n-p}$, which creates an $p$ dimensional elliptical region. Alternatively, we can also construct $p$ CIs of $\hat{\boldbeta_i} \pm \Delta se(\hat{\boldbeta_i})$, where $\Delta$ is chosen to ensure the probability of all intervals being correct is the overall CI value. This constructs a bounding rectangle larger than the elliptical before. e.g. we use the Bonferonni method of setting $\Delta = t_{\alpha/2p,n-p}$ for a $1-\alpha$ CI.
+
+\subsection{3.5 Prediction of New Observations}
+The CI of $y_0$ from $\mathbf{x}_0$ is $\hat{y_0} \pm t_{\alpha/2,n-p}\sqrt{\hat{\sigma}^2(1 + \mathbf{x}_0^T(\X^T\X)^{-1}\mathbf{x}_0)}$.
+
+\subsection{3.9 Hidden Extrapolation}
+In higher dimensions, $\mathbf{x}_0$ can lie in the range of the data but still be an extrapolation as the shape of the data may not be a rectangular. Let the regressor variable hull(RVH) be the smallest convex set containing the data and the largest element on the diagonal of $\mathbf{H}$, $h_{max}$ is on the minimum covering ellipsoid(MCE). Any point $\mathbf{x}_0$, where $x_0^T(\X^T\X)^{-1}x_0 > h_{max}$ is an extrapolation of the model, but \textbf{NOT} vice versa as the ellipsoid is larger than the RVH.
+
+\subsection{3.10 Standardized Regression Coefficients}
+The magnitude of coefficients is affected by the data's unit of measurement, hence we need to standardise them to compare coefficients across models. We can do \textbf{unit normal scaling} by $z_{ij} = \frac{x_{ij}-\bar{x}_j}{s_j}$ and $y_i^* = \frac{y_i-\bar{y}}{s_y}$, where $s_j^2 = \frac{1}{n-1}\sum(x_{ij}-\bar{x}_j)^2$
+and $s_y^2 = \frac{1}{n-1}\sum(y_i-\bar{y})^2$ are the sample variances. This gives the scaled regressors \& response $\mu = 0$ \& $Var = 1$ and LSE $\hat{\mathbf{b}} = (\mathbf{Z}^T\mathbf{Z})^{-1}\mathbf{Z}^T\mathbf{y}^*$. We can also use \textbf{unit length scaling} with $w_{ij} = \frac{x_{ij}-\bar{x}_j}{\sqrt{s_{jj}}}$ and $y_i^* = \frac{y_i-\bar{y}}{\sqrt{SS_T}}$, where $s_{jj} = \sum(x_{ij}-\bar{x}_j)^2$. Each regressor has $\bar{w}_j = 0$ and length $\sqrt{\sum(w_{ij} - \bar{w}_j)^2}$ and the LSE is $\hat{\mathbf{b}} = (\mathbf{W}^T\mathbf{W})^{-1}\mathbf{W}^T\mathbf{y}^*$. $\mathbf{W}^T\mathbf{W} = \frac{1}{n-1}\mathbf{Z}^T\mathbf{Z}$ is the correlation matrix $\mathbf{r}$ where $r_{ij} = S_{ij}/\sqrt{S_{ii}S_{jj}}$ and $r_{iy} = S_{iy}/\sqrt{S_{ii}S_T}$. Both scaling methods result in the same coefficients, zero the intercept and are related to the original by $\hat{\boldbeta_0} = \hat{b_j}\sqrt{SS_T/SS_{jj}}$.
+
+\subsection{3.11 Multicollinearity}
+Near-linear dependence amongst the regression variables is a problem as they reduce the precision of the coefficient LSE. Exact linear dependence results in a singular, non-invertible $\X^T\X$. The diagonals of $\X^T\X$ are the variance inflation factors(VIF) and $VIF_j = 1/(1-R_j^2)$, where $R_j^2$ is obtained by regressing $x_j$ on the other regressors. If $VIF_j = 1$, $x_j$ is orthogonal to all the other regressors. If $VIF_j$ is large, then the regressor is collinear with some other regressors.
+
+\subsection{3.11 Why do Coefficients have the Wrong Sign}
+This could happen if: 1. The range of regressors is too small, as $Var(\hat{\boldbeta_i} = \sigma^2/S_ii)$ is inversely proportional to the spread of the regressor. However, spreading the regressor too far could require more complex models for nonlinear responses. 2. Important regressors have been left out, which would have changed the model. 3. Multicollinearity inflates the variance. 4. Rounding or truncating computational errors of an ill conditioned $\X^T\X$ occur.
+
+
+
+\end{multicols*}
